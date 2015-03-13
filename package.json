@@ -1,6 +1,6 @@
 {
   "name": "express-svg-fallback",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Middleware for Express that automatically converts SVG files to PNG format when the request comes from a browser that does not support SVG.",
   "main": "express-svg-fallback.js",
   "scripts": {
