@@ -22,9 +22,7 @@ In your Express application, simply require the module and configure Express to 
     }));
     
     app.listen(process.env.PORT || 80);
-    
-    module.exports = app;
-    
+
 If you are including middleware for serving static files, `express-svg-fallback` must be used before the other middleware. Example:
 
     var app = express();
@@ -32,7 +30,7 @@ If you are including middleware for serving static files, `express-svg-fallback`
     app.use(express.static('assets'));
     // add other middleware
     
-Whenever a request comes from a browser that does not support rendering of SVG files (currently only IE8), the module handles the request. The files are converted on the fly and then stored to disk. All subsequent requests for the same file will not result in a new conversion, instead, the previously generated PNG file will be served.
+Whenever a request comes from a browser that does not support rendering of SVG files (IE8 or older, Android 2.3 or older), the module handles the request. The files are converted on the fly and then stored to disk. All subsequent requests for the same file will not result in a new conversion, instead, the previously generated PNG file will be served.
 
 
 ## Initialisation options:
@@ -44,6 +42,19 @@ Whenever a request comes from a browser that does not support rendering of SVG f
 
 ## URL query string options
 
-It is possible to let the module do the PNG conversion even when called from modern browsers. To always get the PNG version of a file, add the `?type=png` query string to the URL of the SVG file. For example http://www.example.com/image.svg?type=svg will return the PNG version even when called from Chrome or Firefox.
+It is possible to let the module serve the converted PNG files even to browsers that natively support rendering of SVG files.
 
-To force the conversion of an image (ignoring any previously exectued conversion), use the query string `?force=true`.
+ - To always get the PNG version of a file, add the `?type=png` query string to the URL of the SVG file. For example http://www.example.com/image.svg?type=png will return the PNG version even when called from Chrome or Firefox.
+
+ - To force the conversion of an image (ignoring any previously exectued conversion), use the query string `?force=true`.
+
+
+## Tests
+
+Tests are provided to verify the correct execution of the middleware. To run those tests:
+
+ - from the Console (or Command Prompt in Windows), navigate to the directory where the project has been saved
+
+ - make sure that all the dependencies have been installed, by running `npm install`. This is only required once, and only in cases where the module has been installed using a method different from `npm install express-svg-fallback` - like cloning the GitHub repo or extracting from zip.
+
+ - run `npm test`
