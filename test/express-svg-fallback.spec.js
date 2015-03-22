@@ -1,9 +1,11 @@
 var request = require('supertest');
 var express = require('express');
 var fs = require('fs');
+var assert = require('assert');
 var svgFallback = require('../express-svg-fallback');
 
 var app = null;
+var log = null;
 var fallbackPath = '/fixtures/converted';
 
 function deleteFolderRecursive(path) {
@@ -27,8 +29,23 @@ describe('', function() {
 
 	beforeEach(function() {
 		app = express();
+		log = [];
 		app.use(svgFallback({
-			fallbackPath: fallbackPath
+			fallbackPath: fallbackPath,
+			logger: {
+				debug: function() {
+					for (var i = 0; i < arguments.length; i++)
+						log.push("DEBUG: " + arguments[i]);
+				},
+				info: function() {
+					for (var i = 0; i < arguments.length; i++)
+						log.push("INFO: " + arguments[i]);
+				},
+				error: function() {
+					for (var i = 0; i < arguments.length; i++)
+						log.push("ERROR: " + arguments[i]);
+				}
+			}
 		}));
 		app.use('/fixtures', express.static(__dirname + '/fixtures'));
 		deleteFolderRecursive(__dirname + fallbackPath);
@@ -62,6 +79,7 @@ describe('', function() {
 		});
 
 		it('should convert PNG only once', function(done) {
+
 			request(app)
 				.get('/fixtures/example.svg?type=png')
 				.set('User-Agent', 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0; GTB7.4; InfoPath.2; SV1; .NET CLR 3.3.69573; WOW64; en-US)')
@@ -71,7 +89,11 @@ describe('', function() {
 						.get('/fixtures/example.svg?type=png')
 						.set('User-Agent', 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0; GTB7.4; InfoPath.2; SV1; .NET CLR 3.3.69573; WOW64; en-US)')
 						.expect('Content-Type', 'image/png')
-						.expect(200, done);
+						.expect(200, function() {
+							if (log.indexOf('DEBUG: File exists, sending file content') < 0)
+								assert.fail(false, true, 'Expected log to contain entry for existing file');
+							done();
+						});
 			});
 		});
 	});
