@@ -5,7 +5,8 @@ var mkdirp = require('mkdirp');
 var useragent = require('useragent');
 var svg2png = require('svg2png');
 
-function isSvgSupported(agent) {
+function isSvgSupported(userAgent) {
+	var agent = useragent.is(userAgent);
 	if (!agent.ie && !agent.android)
 		return true;
 	var version = parseFloat(agent.version);
@@ -51,15 +52,14 @@ module.exports = function(options) {
 		var pathname = url_parts.pathname;
 		var extension = path.extname(pathname);
 
-		if (!extension || extension.toLowerCase() != '.svg')
+		if (!extension || extension.toLowerCase() !== '.svg')
 			return next();
 
 		var query = url_parts.query || {};
-		var agent = useragent.is(req.headers['user-agent']);
 		var force = (query.force || '').toLowerCase() === 'true';
 		var type = (query.type || '').toLowerCase();
 
-		if (!force && type !== 'png' && isSvgSupported(agent))
+		if (!force && type !== 'png' && isSvgSupported(req.headers['user-agent']))
 			return next();
 
 		var newPathname = fallbackPath + pathname + '.png';
