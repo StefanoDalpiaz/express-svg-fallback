@@ -4,7 +4,6 @@ var fs = require('fs');
 var mkdirp = require('mkdirp');
 var useragent = require('useragent');
 var svg2png = require('svg2png');
-var Logger = require('./logger');
 
 function isSvgSupported(agent) {
 	if (!agent.ie && !agent.android)
@@ -21,10 +20,14 @@ module.exports = function(options) {
 
 	var fallbackPath = options.fallbackPath;
 
-	var logger = new Logger({
-		enableDebug: options.debug,
-		enableInfo: options.info
-	});
+	var logger = options.logger;
+	if (!logger) {
+		var SimpleLogger = require('./simple-logger');
+		logger = new SimpleLogger({
+			enableDebug: options.debug,
+			enableInfo: options.info
+		});
+	}
 
 	logger.info('Initialising SVG fallback module');
 

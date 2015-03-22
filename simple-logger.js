@@ -1,9 +1,9 @@
-function Logger(options) {
+function SimpleLogger(options) {
 	this.enableDebug = options && !!options.enableDebug;
 	this.enableInfo = this.enableDebug || options && !!options.enableInfo;
 }
 
-Logger.prototype = {
+SimpleLogger.prototype = {
 
 	error: function() {
 		console.error.apply(global, ["ERROR"].concat(Array.prototype.slice.call(arguments)));
@@ -21,4 +21,4 @@ Logger.prototype = {
 };
 
 
-module.exports = Logger;
+module.exports = SimpleLogger;
