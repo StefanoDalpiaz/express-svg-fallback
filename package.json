@@ -1,7 +1,7 @@
 {
   "name": "express-svg-fallback",
-  "version": "0.1.3",
-  "description": "Middleware for node.js Express that automatically converts SVG files to PNG format when the request comes from a browser that does not support SVG.",
+  "version": "0.1.4",
+  "description": "Middleware for node.js Express to convert SVG images to PNG format on the fly when the request comes from a legacy browser.",
   "main": "express-svg-fallback.js",
   "scripts": {
     "test": "node ./node_modules/mocha/bin/mocha ./test/*.spec.js"
